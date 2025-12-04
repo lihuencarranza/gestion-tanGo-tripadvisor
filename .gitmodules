@@ -1,0 +1,3 @@
+[submodule "gestion-g6-front"]
+	path = gestion-g6-front
+	url = https://github.com/Gestion-Grupo-6/gestion-g6-front.git
