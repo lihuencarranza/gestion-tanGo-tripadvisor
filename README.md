@@ -2,7 +2,8 @@
 
 Aplicación web completa para la gestión y visualización de hoteles, restaurantes y actividades turísticas, desarrollada con Spring Boot (backend) y Next.js (frontend).
 
-<img width="2852" height="1318" alt="image" src="https://github.com/user-attachments/assets/5e15d5af-fbd2-4116-b0aa-84e2a406969c" />
+<img width="2845" height="1319" alt="image" src="https://github.com/user-attachments/assets/0b8c15d4-b3be-4332-8a4b-ce97ba3ec2a5" />
+
 
 
 ## Contenidos
