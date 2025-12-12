@@ -2,13 +2,15 @@
 
 Aplicación web completa para la gestión y visualización de hoteles, restaurantes y actividades turísticas, desarrollada con Spring Boot (backend) y Next.js (frontend).
 
+<img width="2852" height="1318" alt="image" src="https://github.com/user-attachments/assets/5e15d5af-fbd2-4116-b0aa-84e2a406969c" />
+
+
 ## Contenidos
 
 - [Requisitos](#requisitos)
 - [Tecnologías Utilizadas](#tecnologías-utilizadas)
 - [Configuración Inicial](#configuración-inicial)
 - [Ejecución con Docker](#ejecución-con-docker)
-- [Ejecución Manual](#ejecución-manual)
 - [Estructura del Proyecto](#estructura-del-proyecto)
 - [Variables de Entorno](#variables-de-entorno)
 - [Solución de Problemas](#solución-de-problemas)
@@ -57,7 +59,7 @@ Aplicación web completa para la gestión y visualización de hoteles, restauran
 - **MongoDB 8.0** - Base de datos NoSQL
 
 
-## ⚙️ Configuración Inicial
+## Configuración Inicial
 
 ### 1. Clonar el Repositorio
 
@@ -105,12 +107,6 @@ docker-compose up -d --build
 
 # O solo levantar (si ya están construidas las imágenes)
 docker-compose up -d
-```
-
-#### Modo Desarrollo (con hot reload)
-
-```bash
-docker-compose -f docker-compose.dev.yml up -d --build
 ```
 
 ### Verificar que los Servicios Estén Corriendo
@@ -173,7 +169,7 @@ cd gestion-g6-back
 node load-database.js
 ```
 
-## 📁 Estructura del Proyecto
+## Estructura del Proyecto
 
 ```
 gestion-tripadvisor/
@@ -204,7 +200,7 @@ gestion-tripadvisor/
 └── README.md                     # Este archivo
 ```
 
-## 🔐 Variables de Entorno
+## Variables de Entorno
 
 ### Backend (`gestion-g6-back/.env`)
 
@@ -233,7 +229,7 @@ NEXT_PUBLIC_API_BASE_URL=http://localhost:8080
 
 **Nota**: Las variables `NEXT_PUBLIC_*` están disponibles tanto en el cliente como en el servidor. Para Docker, el servidor usa `API_BASE_URL=http://backend:8080` automáticamente.
 
-## 🔍 Endpoints Principales del Backend
+## Endpoints Principales del Backend
 
 - `GET /ping` - Verificación de salud del servicio
 - `GET /hotels` - Listar todos los hoteles
@@ -250,7 +246,7 @@ NEXT_PUBLIC_API_BASE_URL=http://localhost:8080
 - `GET /posts/full` - Obtener todos los posts completos (para IA)
 
 
-## 📝 Notas Adicionales
+## Notas Adicionales
 
 - El proyecto usa **submódulos Git** para `gestion-g6-back` y `gestion-g6-front`
 - Las imágenes se almacenan en **Supabase Storage** (bucket: `tango-images`)
