@@ -1,0 +1,96 @@
+services:
+  # MongoDB Database
+  mongodb:
+    image: mongo:8.0
+    container_name: gestion-mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_DATABASE: gestion-g6
+    volumes:
+      - mongodb_data:/data/db
+      - mongodb_config:/data/configdb
+    networks:
+      - gestion-network
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Backend Spring Boot
+  backend:
+    build:
+      context: ./gestion-g6-back
+      dockerfile: Dockerfile
+    container_name: gestion-backend
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATA_MONGODB_URI: mongodb://mongodb:27017/gestion-g6
+      MONGO_URI: mongodb://mongodb:27017
+      CLOUD_MONGO_LINK: mongodb://mongodb:27017/gestion-g6
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    networks:
+      - gestion-network
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8080/ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Frontend Next.js
+  frontend:
+    build:
+      context: ./gestion-g6-front
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_API_BASE_URL: http://localhost:8080
+        NEXT_PUBLIC_SUPABASE_URL: ${NEXT_PUBLIC_SUPABASE_URL:-https://ucntmhnssxrrmspecams.supabase.co}
+        NEXT_PUBLIC_SUPABASE_ANON_KEY: ${NEXT_PUBLIC_SUPABASE_ANON_KEY:-eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVjbnRtaG5zc3hycm1zcGVjYW1zIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA2NDI0NzIsImV4cCI6MjA3NjIxODQ3Mn0.MDiR11ReMFAQVK5Ch1yuN9RuIp-yaebtOQ4sSJ0t2oo}
+        NEXT_PUBLIC_SUPABASE_BUCKET_NAME: ${NEXT_PUBLIC_SUPABASE_BUCKET_NAME:-tango-images}
+        NEXT_PUBLIC_GOOGLE_MAPS_API_KEY: ${NEXT_PUBLIC_GOOGLE_MAPS_API_KEY:-AIzaSyBy0nl7YeDWexazsCwd-YGN9xjTFOyQaEI}
+        NEXT_PUBLIC_MAP_ID: ${NEXT_PUBLIC_MAP_ID:-87a2f01c6cc58e67af3b462d}
+    container_name: gestion-frontend
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: production
+      # IMPORTANTE: Desde el navegador del usuario, el backend está en localhost:8080
+      # Desde dentro del contenedor Docker (server-side), usar http://backend:8080
+      NEXT_PUBLIC_API_BASE_URL: http://localhost:8080
+      # Variable para uso en servidor (no expuesta al cliente)
+      API_BASE_URL: http://backend:8080
+      NEXT_PUBLIC_SUPABASE_URL: ${NEXT_PUBLIC_SUPABASE_URL:-}
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: ${NEXT_PUBLIC_SUPABASE_ANON_KEY:-}
+      NEXT_PUBLIC_SUPABASE_BUCKET_NAME: ${NEXT_PUBLIC_SUPABASE_BUCKET_NAME:-tango-images}
+      NEXT_PUBLIC_GOOGLE_MAPS_API_KEY: ${NEXT_PUBLIC_GOOGLE_MAPS_API_KEY:-}
+      NEXT_PUBLIC_MAP_ID: ${NEXT_PUBLIC_MAP_ID:-}
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - gestion-network
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+volumes:
+  mongodb_data:
+    driver: local
+  mongodb_config:
+    driver: local
+
+networks:
+  gestion-network:
+    driver: bridge
+
